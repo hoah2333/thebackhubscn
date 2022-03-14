@@ -52,12 +52,12 @@ var siteNum = IntKeys.length;
 var siteLang = "cn";
 var siteData = IntData[siteLang];
 var siteID = siteData ? siteData["id"] : false;
-var pagename = getQueryString("pagename").replace(/^_default:/gm, "");
+var pagename = getQueryString("pagename").replace(https://backrooms-wiki-cn.wikidot.com/^_default:/gm, "");
 var shorten = 59 <= pagename.length;
 var styleType = getQueryString("style");
 var styleCheck = true;
 var styleAry = [];
-if (siteData["category"] != "") pagename = pagename.replace(new RegExp("^" + siteData["category"] + "((-)(adult))?:", "gm"), "$3:").replace(/^:+/gm, "");
+if (siteData["category"] != "") pagename = pagename.replace(new RegExp("^" + siteData["category"] + "((-)(adult))?:", "gm"), "$3:").replace(http://backrooms-wiki-cn.wikidot.com/^:+/gm, "");
 if (styleType == "") {
     styleType = pageCategory == "wanderers" || pageCategory == "wanderers-adult" ? "wanderers" : "default";
 }
