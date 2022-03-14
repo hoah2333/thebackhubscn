@@ -19,7 +19,7 @@ function getWikiModule(v) {
     xhr = _xhr(),
     site_id = v.site_id ? "&s=" + v.site_id : "",
     query = "&q=" + (v.query ? v.query : "_"),
-    url = "https://www.wikidot.com/quickmodule.php?module=PageLookupQModule" + site_id + query;
+    url = "https://backrooms-wiki-cn.wikidot.com/quickmodule.php?module=PageLookupQModule" + site_id + query;
     xhr.onreadystatechange = function() {
         if(xhr.readyState == 4){
             if(xhr.status != 200){
