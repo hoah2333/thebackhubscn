@@ -1,0 +1,73 @@
+tagFunc([{
+    "origin": "entity",
+    "ru": "сущность",
+    "cn": "实体",
+    "fr": "entité",
+    "pt-br": "entidade",
+    "vn": "thực-thể",
+    "type_ru": false,
+    "type_cn": "主要页面",
+    "type_fr": "Principaux types",
+    "type_pt-br": false,
+    "type_vn": "chính dành cho Trang"
+} {
+    "origin": "group",
+    "ru": "группа",
+    "cn": "组织",
+    "fr": "groupe",
+    "pt-br": "grupo",
+    "vn": "thế-lực",
+    "type_ru": false,
+    "type_cn": "主要页面",
+    "type_fr": "Principaux types",
+    "type_pt-br": false,
+    "type_vn": "chính dành cho Trang"
+} {
+    "origin": "level",
+    "ru": "уровень",
+    "cn": "层级",
+    "fr": "niveau",
+    "pt-br": "nível",
+    "vn": "level",
+    "type_ru": false,
+    "type_cn": "主要页面",
+    "type_fr": "Principaux types",
+    "type_pt-br": false,
+    "type_vn": "chính dành cho Trang"
+} {
+    "origin": "object",
+    "ru": "объект",
+    "cn": "物品",
+    "fr": "objet",
+    "pt-br": "objeto",
+    "vn": "vật-thể",
+    "type_ru": false,
+    "type_cn": "主要页面",
+    "type_fr": "Principaux types",
+    "type_pt-br": false,
+    "type_vn": "chính dành cho Trang"
+} {
+    "origin": "person-of-interest",
+    "ru": "интересные-персоны",
+    "cn": "相关人士",
+    "fr": "personne-d-intérêt",
+    "pt-br": "pessoa-de-interesse",
+    "vn": "cá-nhân-đáng-lưu-tâm",
+    "type_ru": false,
+    "type_cn": "主要页面",
+    "type_fr": "Principaux types",
+    "type_pt-br": false,
+    "type_vn": "chính dành cho Trang"
+} {
+    "origin": "person-of-interest",
+    "ru": "интересные-персоны",
+    "cn": "相关人士",
+    "fr": "personne-d-intérêt",
+    "pt-br": "pessoa-de-interesse",
+    "vn": "cá-nhân-đáng-lưu-tâm",
+    "type_ru": false,
+    "type_cn": "主要页面",
+    "type_fr": "Principaux types",
+    "type_pt-br": false,
+    "type_vn": "chính dành cho Trang"
+}])
