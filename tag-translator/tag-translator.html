@@ -1,0 +1,244 @@
+<head>
+<!--
+    Tags Translator
+    Created by 7happy7 ( http://www.wikidot.com/user:info/7happy7 )
+
+        Special Thanks:
+            C-take ( http://www.wikidot.com/user:info/c-take )
+                for his Resizing iframe method
+                http://shitake-crude-production.wikidot.com/extension:ifarame-htmlblock
+                (Edited by 7happy7)
+
+            Jochoi ( http://www.wikidot.com/user:info/jochoi )
+                for his relay point of the database for avoiding access-restriction on -CN
+                http://zh.xjo.ch/tagtrans
+
+    All assets on this page are licensed under CC BY-SA 3.0
+    http://creativecommons.org/licenses/by-sa/3.0/
+-->
+<title>SCP - Tags Translator</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="http://topia.wikidot.com/trans-tags/code/2">
+</head>
+<body>
+<div id="int"></div>
+<textarea id="ta" placeholder="Now Loading..." disabled></textarea>
+<div id="pred"><a>No results.</a></div>
+<div id="wrap"></div>
+<script>
+var ta = document.getElementById("ta");
+var pred = document.getElementById("pred");
+var int = document.getElementById("int");
+var config = {
+    lang: [
+        "origin",
+        "ru",
+        "cn",
+        "fr",
+        "ptbr",
+        "vn"
+    ],
+    caution: [
+        "工作人员专用",//cn
+    ],
+    area: {},
+    temp: {},
+    prediction: {
+        list: [],
+        caret: {}
+    }
+};
+if(window !== window.parent) {//based on C-take's resizing iframe method
+    var site = `http://${document.referrer.split("http://")[1].split("/")[0]}/`;
+    var _wrap = document.createElement("div");
+    document.body.appendChild(_wrap);
+    var _old= 0;
+    var url = location.href.replace(/^.*\//,'/');
+    (function() {
+        var _new = _wrap.getBoundingClientRect().top;
+        if(_new !== _old){
+            var iframe = document.createElement("iframe");
+            var _rand = String(Math.floor(Math.random() * 10000));
+            _wrap.innerHTML = '';
+            iframe.src = `${site}common--javascript/resize-iframe.html?${_rand}#${_new}${url}`;
+            iframe.style.display = "none";
+            _wrap.appendChild(iframe);
+            _old = _new;
+        }
+        setTimeout(arguments.callee, 50);
+   })();
+}
+var wrap = document.getElementById("wrap");
+for(var lang of config.lang) {
+    var a = document.createElement("pre");
+    wrap.appendChild(a);
+    a.setAttribute("data-lang", lang);
+    a.onclick = (e) =>{
+        var r = document.createRange();
+        var s = window.getSelection();
+        s.removeAllRanges();
+        r.selectNodeContents(e.target);
+        s.addRange(r);
+    }
+    config.area[lang] = a;
+    config.temp[lang] = [];
+}
+var tagFunc_cb = (list) => {
+    var note = "请输入页面标签，以空格分割。";
+    config.list = list;
+    if(Object.keys(config.list[0]).indexOf("") > -1) {
+        note = "数据库系统正在升级中：结果可能会被折叠。请稍等。";
+    }
+    ta.removeAttribute("disabled");
+    ta.setAttribute("placeholder", note);
+    var _i = {};
+    for(var a of config.list) {
+        for(var k in a) {
+            if(k.match(/type_/) || !a[k]) {
+                continue;
+            }else {
+                _i[k] = _i[k] || 0;
+                _i[k]++;
+            }
+        }
+    }
+    int.innerHTML = `<div><b>支持的语言：</b>${config.lang.slice(1).map(v=>(`<span>-${v.toUpperCase()} (${_i[v]})</span>`)).join("")}</div>`;
+    ta.focus();
+    var cur = () => {
+        var v = ta.value;
+        var s_len = ta.selectionStart;
+        var c = {st: v.substr(0, s_len), ed: v.substr(s_len, v.length)};
+        var m_1 = c.st.match(/(?:^|\s)(\S*?)$/);
+        if(m_1) {
+            var bef = c.st.substr(0, m_1.index);
+            var x = c.st.replace(new RegExp("^" + bef), "");
+            var aft = "";
+            var m_2 = c.ed.match(/^\S*?(?:$|\s)/);
+            if(m_2) {
+                var y = m_2[0];
+                x += y;
+                aft = c.ed.replace(new RegExp("^" + y), "");
+            }
+        }
+        config.prediction.caret = {bef: bef, x: x, aft: aft};
+        var val = x.replace(/^(\s?)(.*?)(\s?)$/, "$2");
+        var res = [];
+        if(val !== "") {
+            for(var a of config.list) {
+                for(var k in a) {
+                    if(!k.match("type_") && a[k] && a[k].match(val) && res.indexOf(a[k]) == -1) {
+                        res.push(a[k]);
+                    }
+                }
+            }
+        }
+        res.sort((a, b) => (a.length - b.length));
+        res = res.slice(0, 10);
+        pred.innerHTML = "";
+        for(var r of res) {
+            var a = document.createElement("a");
+            a.innerHTML = r;
+            pred.appendChild(a);
+            a.onclick = (e) => {
+                var c = config.prediction.caret;
+                c.x = c.x.replace(/^(\s?)(.*?)(\s?)$/, (m, w1, v, w2) => (w1 + e.target.innerHTML + w2))
+                ta.value = c.bef + c.x + c.aft;
+                ta.focus();
+                var l = (c.bef + c.x).length;
+                ta.setSelectionRange(l, l);
+                set();
+                pred.innerHTML = "<a>无结果。</a>";
+            }
+        }
+        var no = document.createElement("a");
+        no.innerHTML = "无结果。";
+        pred.appendChild(no);
+        config.prediction.list = res;
+        return config.prediction;
+    }
+    var set = () => {
+        for(var lang of config.lang) {
+            config.temp[lang] = [];
+        }
+        for(var s of document.querySelectorAll("pre span")) {
+            s.onmousemove = () => {}
+            s.ontouchstart = () => {}
+        }
+        var ts = ta.value.split(/\s/).filter((x, i, self) => (x && self.indexOf(x) === i));
+        var result = [];
+        ts.forEach((r)=>{
+            var x;
+            for(var lang of config.lang) {
+                x = config.list.find(v=>v[lang]==r);
+                if(x) {
+                    break;
+                }
+            }
+            for(var lang of config.lang) {
+                var res = (x && x[lang]) ? (() => {
+                    var type = x[`type_${lang}`] || "?";
+                    var cls = (config.caution.indexOf(type) > -1) ? "fa-exclamation-circle" : "fa-check-circle";
+                    return `<span class="fa ${cls}" data-x="${type}" ontouchstart>${x[lang]}</span>`;
+                })() : `<span class="fa fa-times-circle" data-x="?" ontouchstart>${r}</span>`;
+                config.temp[lang].push(res);
+            }
+        });
+        for(var lang of config.lang) {
+            config.area[lang].innerHTML = config.temp[lang].join(" ");
+        }
+        for(var s of document.querySelectorAll("pre span")) {
+            s.onmousemove = (e) => {
+                var bounds = e.target.getBoundingClientRect();
+                var x = e.clientX - bounds.left;
+                var y = e.clientY - bounds.top;
+                e.target.setAttribute("style", `--x: ${x}px; --y: ${y}px`);
+            }
+            s.ontouchstart = (e) => {
+                for(var t of e.changedTouches) {
+                    var bounds = t.target.getBoundingClientRect();
+                    var x = t.clientX - bounds.left;
+                    var y = t.clientY - bounds.top;
+                    e.target.setAttribute("style", `--x: ${x}px; --y: ${y}px`);
+                }
+            }
+        }
+    }
+    ta.onclick = () => {
+        cur();
+    }
+    ta.oninput = () => {
+        set();
+        cur();
+    }
+}
+
+var loadJSONP = (url, cbName) => {
+    return new Promise(function(_r, _e) {
+        window[cbName] = function(j) {
+            delete window[cbName];
+            _r(j);
+        }
+        var s = document.createElement("script");
+        s.src = url;
+        document.head.appendChild(s);
+        s.onerror = function(e) {
+            delete window[cbName];
+            _e(e);
+            s.remove();
+        }
+    });
+}
+
+loadJSONP("http://zh.xjo.ch/tagtrans", "tagFunc")
+.then(r=>{
+    tagFunc_cb(r);
+})
+.catch(e=>{
+    loadJSONP("https://script.google.com/macros/s/AKfycbwhgAMxhS2VRCq7RLX3Geoy5dX4OkkytvUIlm2Xqc9KbyXr8vPM/exec?callback=tagFunc", "tagFunc")
+    .then(r=>{
+        tagFunc_cb(r);
+    })
+});
+
+</script>
+</body>
